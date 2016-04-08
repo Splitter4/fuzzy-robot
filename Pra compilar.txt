@@ -1,0 +1,1 @@
+g++ main.cpp environm.cpp sock.cpp -I./ -o SoccerPlayer.exe -lwsock32 -Wall -Wextra
