@@ -1,1 +1,10 @@
 g++ main.cpp environm.cpp sock.cpp -I./ -o SoccerPlayer.exe -lwsock32 -Wall -Wextra
+
+
+-I serve pra dizer onde tão os includes (que, no caso, tá na mesma pasta, por isso o ./)
+
+-lwsock32 é uma biblioteca de sockets que precisa (winsock acho que é o nome?)
+
+-Wall pra mais warnings
+
+-Wextra pra ainda mais warnings (-Wall não dá todos os warnings, na verdade)
