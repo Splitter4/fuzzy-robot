@@ -56,15 +56,15 @@ void init()
     //int variacao = 360/TAMANHO_CONJUNTO;
     //float theta = -180;
 
-    for (int x = -180; x <= TAMANHO_CONJUNTO; x++)
+    for (int x = 0; x <= TAMANHO_CONJUNTO; x++)
     {
-        Eb[x] = triangulo(x,-190,-180,0);
-        Fb[x] = triangulo(x,-90,0,90);
-        Db[x] = triangulo(x,-0,180,190);
+        Eb[x] = triangulo(x - 180,  -190,   -180,   0   );
+        Fb[x] = triangulo(x - 180,  -90 ,    0  ,   90  );
+        Db[x] = triangulo(x - 180,  -0  ,    180,   190 );
 
-        Ea[x] = triangulo(x,-190,-180,0);
-        Fa[x] = triangulo(x,-90,0,90);
-        Da[x] = triangulo(x,-0,180,190);
+        Ea[x] = triangulo(x - 180,  -190,   -180,   0   );
+        Fa[x] = triangulo(x - 180,  -90 ,    0  ,   90  );
+        Da[x] = triangulo(x - 180,  -0  ,    180,   190 );
 
         //theta = theta + variacao;
     }
