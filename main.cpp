@@ -6,19 +6,19 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define TAMANHO_CONJUNTO 72
+#define TAMANHO_CONJUNTO 360 + 1 // De -180 até 180, incluindo o 0.
 
-int variacao = 360/TAMANHO_CONJUNTO;
-
-
+// Conjuntos relativos à posição da bola.
 float Eb[TAMANHO_CONJUNTO];
 float Fb[TAMANHO_CONJUNTO];
 float Db[TAMANHO_CONJUNTO];
 
+// Conjuntos relativos à posição do alvo.
 float Ea[TAMANHO_CONJUNTO];
 float Fa[TAMANHO_CONJUNTO];
 float Da[TAMANHO_CONJUNTO];
 
+// Graus de pertinência dos conjuntos de entrada.
 float bolaDireita;
 float bolaFrente;
 float bolaEsquerda;
@@ -26,30 +26,35 @@ float alvoDireita;
 float alvoFrente;
 float alvoEsquerda;
 
-float triangulo(float x,float alfa,float beta,float gama)
+float triangulo(float x, float alfa, float beta, float gama)
 {
-    float mi=0;
+    float mi = 0;
+    
     if ((x <= alfa) || (x >= gama)) 
     {
-        mi=0; 
+        mi=0;
         return mi;
     }
+    
     if ((x >= alfa) && (x <= beta)) 
     {
-        mi = (x - alfa)/(beta - alfa); 
+        mi = (x - alfa)/(beta - alfa);
         return mi;
     }
+    
     if ((x >  beta) && (x <  gama)) 
     {
-        mi=(gama - x)/(gama - beta); 
+        mi=(gama - x)/(gama - beta);
         return mi;
     }
+    
     return mi;
 } 
 
+// Inicialização de conjuntos.
 void init()
 {
-    int i;
+    //int variacao = 360/TAMANHO_CONJUNTO;
     
     for (int x = 0; x <= TAMANHO_CONJUNTO; x++)
     {
@@ -63,85 +68,54 @@ void init()
 
         //theta = theta + variacao;
     }
-
-    return;
-
 }
 
-void fuzzyficacao(float ballAngle,float targetAngle)
+int emGraus(float radianos)
 {
-    int i,j=0;
-    if (ballAngle<0)
-    {
-        i = 180 + ballAngle;
-        while (i>variacao)
-        {
-            j++;
-            i = i - variacao;
-        }
-    }else
-    {
-        i = ballAngle;
-        j=36; // Posição 0º
-        while (i>=variacao)
-        {
-            j++;
-            i = i - variacao;
-        }
-    }
+    return int( (radianos*180)/M_PI );
+}
 
-    bolaDireita  = Db[i];
-    bolaFrente   = Fb[i];
-    bolaEsquerda = Eb[i];
-
-    if (targetAngle<0)
-    {
-        i = 180 + targetAngle;
-        while (i>5)
-        {
-            j++;
-            i = i - 5;
-        }
-    }else
-    {
-        i = targetAngle;
-        j=36; // Posição 0º
-        while (i>=variacao)
-        {
-            j++;
-            i = i - variacao;
-        }
-    }
-
-    alvoDireita  = Da[i];
-    alvoFrente   = Fa[i];
-    alvoEsquerda = Ea[i];
+void fuzzyficacao(float ballAngle, float targetAngle)
+{
+    bolaDireita  = Db[emGraus(ballAngle) + 180];
+    bolaFrente   = Fb[emGraus(ballAngle) + 180];
+    bolaEsquerda = Eb[emGraus(ballAngle) + 180];
+    
+    alvoDireita  = Da[emGraus(targetAngle) + 180];
+    alvoFrente   = Fa[emGraus(targetAngle) + 180];
+    alvoEsquerda = Ea[emGraus(targetAngle) + 180];
 }
 
 int main( int argc, char* argv[] ) {
 
-    float   ballAngle, targetAngle, leftMotor, rightMotor;
+    float ballAngle, targetAngle, leftMotor, rightMotor;
 
     // Declaração do objeto que representa o ambiente.
     environm::soccer::clientEnvironm environment;
 
-    if ( argc != 3 ) {
-        printf( "\nInvalid parameters. Expecting:" );
-        printf( "\nSoccerPlayer SERVER_ADDRESS_STRING SERVER_PORT_NUMBER\n" );
-        printf( "\nSoccerPlayer localhost 1024\n" );        
+    if ( argc != 3 )
+    {
+        printf( "Invalid parameters. Expecting:\n" );
+        printf( "SoccerPlayer SERVER_ADDRESS_STRING SERVER_PORT_NUMBER\n" );
+        printf( "\nExample:\n" );
+        printf( "SoccerPlayer localhost 1024\n\n" );  
+              
         return 0;
     }
 
     // Conecta-se ao SoccerMatch. Supõe que SoccerMatch está rodando na máquina
     // local e que um dos robôs esteja na porta 1024. Porta e local podem mudar.
-    if ( ! environment.connect( argv[1], atoi( argv[2] ) ) ) {
-        printf( "\nFail connecting to the SoccerMatch.\n" );
+    if ( ! environment.connect( argv[1], atoi( argv[2] ) ) )
+    {
+        printf( "Fail connecting to the SoccerMatch.\n\n" );
+        
         return 0;  // Cancela operação se não conseguiu conectar-se.
     }
 
     // Laço de execução de ações.
-    printf( "\nRunning..." );
-
+    printf( "Running...\n" );
+    
+    // Inicializa conjuntos.
     init();
 
     while ( 1 ) {
@@ -149,18 +123,20 @@ int main( int argc, char* argv[] ) {
         // Deve obter os dados desejados do ambiente. Métodos do clientEnvironm.
         // Exemplos de métodos que podem ser utilizados.
         ballAngle = environment.getBallAngle();
-        targetAngle = environment.getTargetAngle( environment.getOwnGoal() );
-
-
-        // A partir dos dados obtidos, deve inferir que ações executar.
-
+        targetAngle = environment.getTargetAngle( environment.getRivalGoal() );
+        
+        // Obtém graus de pertinência.
         fuzzyficacao(ballAngle,targetAngle);
-
-
-
+        
+        // Corta conjuntos e os une.
+        //inferencia();
+        
+        // Obtém valor final.
+        //defuzzificacao();
+        
         leftMotor  = 0.1;
         rightMotor = 0.1;
-
+        
         // Transmite ação do robô ao ambiente. Fica bloqueado até que todos os
         // robôs joguem. Se erro, retorna false (neste exemplo, sai do laco).
         if ( ! environment.act( leftMotor, rightMotor ) ) {

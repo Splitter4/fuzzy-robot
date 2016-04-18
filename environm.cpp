@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstdio>
 
 #include "environm.h"
 #include "soccerdef.hpp"
@@ -537,6 +538,7 @@ float environm::getSpin( int _id ) const {
 void environm::event( int _event ) {
 
     // It does not do anything. This method should be overloaded.
+    _event = _event; // Do nothing.
 }
 //------------------------------------------------------------------------------
 
@@ -1157,7 +1159,7 @@ bool clientEnvironm::getMatchStatus( bool _ask ) {
 //------------------------------------------------------------------------------
 void clientEnvironm::onSockEvent( const char *_msg ) {
 
-    // It does not do anything. It could be overloaded.
+    printf("%s\n", _msg);
 }
 //------------------------------------------------------------------------------
 
