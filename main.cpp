@@ -239,11 +239,8 @@ int main( int argc, char* argv[] )
         // Obtém saída final
         float resultado = defuzzificacao(conjFinal);
 
-        leftMotor  = (resultado/(-360) + 0.5)*0.1;
-        rightMotor = (resultado/360 + 0.5)*0.1;
-
-        //leftMotor *= 0.9;
-        //rightMotor *= 0.9;
+        leftMotor  = (resultado/360 + 0.5)*0.1;
+        rightMotor = (resultado/(-360) + 0.5)*0.1;
         
         // Transmite ação do robô ao ambiente. Fica bloqueado até que todos os
         // robôs joguem. Se erro, retorna false (neste exemplo, sai do laco).
