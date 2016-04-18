@@ -213,7 +213,7 @@ int main( int argc, char* argv[] )
     }
 
     // Laço de execução de ações.
-    printf( "Running...\n" );
+    printf( "Running...\n\n" );
     
     // Inicializa conjuntos.
     init();
@@ -222,10 +222,12 @@ int main( int argc, char* argv[] )
     
     float conjFinal[TAMANHO_CONJUNTO];
     
+    int k = 15;
+    
     while ( true )
     {
-        ballAngle = environment.getBallAngle();
-        targetAngle = environment.getTargetAngle( environment.getRivalGoal() );
+        ballAngle = -environment.getBallAngle();
+        targetAngle = -environment.getTargetAngle( environment.getOwnGoal() );
         
         // Obtém graus de pertinência.
         fuzzyficacao(ballAngle, targetAngle);
@@ -239,8 +241,17 @@ int main( int argc, char* argv[] )
         // Obtém saída final
         float resultado = defuzzificacao(conjFinal);
 
-        leftMotor  = (resultado/360 + 0.5)*0.1;
-        rightMotor = (resultado/(-360) + 0.5)*0.1;
+        leftMotor = (resultado/360 + 0.5)*0.1;
+        rightMotor  = (resultado/(-360) + 0.5)*0.1;
+        
+        if(++k >= 15)
+        {
+            printf("ballAngle = %d | targetAngle = %d\n", emGraus(ballAngle), emGraus(targetAngle));
+            printf("resultado = %f\n", resultado);
+            printf("left = %f | right = %f\n\n", leftMotor, rightMotor);
+            
+            k = 0;
+        }
         
         // Transmite ação do robô ao ambiente. Fica bloqueado até que todos os
         // robôs joguem. Se erro, retorna false (neste exemplo, sai do laco).
