@@ -66,7 +66,7 @@ float triangulo(float x, float alfa, float beta, float gama)
     
     if ((x <= alfa) || (x >= gama)) 
     {
-        mi=0;
+        mi = 0;
         return mi;
     }
     
@@ -78,7 +78,7 @@ float triangulo(float x, float alfa, float beta, float gama)
     
     if ((x >  beta) && (x <  gama)) 
     {
-        mi=(gama - x)/(gama - beta);
+        mi = (gama - x)/(gama - beta);
         return mi;
     }
     
@@ -227,7 +227,7 @@ int main( int argc, char* argv[] )
     while ( true )
     {
         ballAngle = -environment.getBallAngle();
-        targetAngle = -environment.getTargetAngle( environment.getOwnGoal() );
+        targetAngle = -environment.getTargetAngle( environment.getRivalGoal() ) - M_PI;
         
         // Obtém graus de pertinência.
         fuzzyficacao(ballAngle, targetAngle);
@@ -240,9 +240,44 @@ int main( int argc, char* argv[] )
 
         // Obtém saída final
         float resultado = defuzzificacao(conjFinal);
-
+        
+        if ((resultado >= -180) && (resultado < -45)) 
+        {
+            leftMotor = (resultado - (-180))/(90 - (-180));
+        }
+        
+        if ((resultado >= -45) && (resultado < 0)) 
+        {
+            leftMotor = (resultado - (-135))/(45 - (-135));
+        }
+        
+        if ((resultado >= 0) && (resultado <= 180)) 
+        {
+            leftMotor = (resultado - (-540))/(180 - (-540));
+        }
+        
+        if ((resultado >= -180) && (resultado < 0)) 
+        {
+            rightMotor = (540 - resultado)/(540 - (-180));
+        }
+        
+        if ((resultado >= 0) && (resultado < 45)) 
+        {
+            rightMotor = (135 - resultado)/(135 - (-45));
+        }
+        
+        if ((resultado >= 45) && (resultado <= 180)) 
+        {
+            rightMotor = (180 - resultado)/(180 - (-90));
+        }
+        
+        leftMotor = (leftMotor*2 -1)*0.1;
+        rightMotor  = (rightMotor*2 -1)*0.1;
+        
+        /*
         leftMotor = (resultado/360 + 0.5)*0.1;
         rightMotor  = (resultado/(-360) + 0.5)*0.1;
+        */
         
         if(++k >= 15)
         {
