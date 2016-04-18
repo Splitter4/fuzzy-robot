@@ -86,6 +86,163 @@ void fuzzyficacao(float ballAngle, float targetAngle)
     alvoEsquerda = Ea[emGraus(targetAngle) + 180];
 }
 
+
+void regras()
+{
+    int i;
+
+    for (i=0;i<3;i++) // Inicialização das Variaveis
+    {
+        acaoFrente[i] = 0;
+        acaoEsquerda[i] = 0;
+        acaoDireita[i] = 0;
+    }
+
+
+    if (bolaEsquerda && alvoEsquerda) // Regra 01
+        {
+            if(bolaEsquerda > alvoEsquerda)
+                acaoFrente[0] = alvoEsquerda;
+            else
+                acaoFrente[0] = bolaEsquerda;
+        }
+    if (bolaEsquerda && alvoFrente) // Regra 02
+        {
+            if(bolaEsquerda > alvoFrente)
+                acaoEsquerda[0] = alvoFrente;
+            else
+                acaoEsquerda[0] = bolaEsquerda;
+        }
+    if (bolaEsquerda && alvoDireita) // Regra 03
+        {
+            if(bolaEsquerda > alvoDireita)
+                acaoEsquerda[1] = alvoDireita;
+            else
+                acaoEsquerda[1] = bolaEsquerda;
+        }
+    if (bolaFrente   && alvoEsquerda) // Regra 04
+        {
+            if(bolaFrente > alvoEsquerda)
+                acaoDireita[0] = alvoEsquerda;
+            else
+                acaoDireita[0] = bolaFrente;
+        }
+    if (bolaFrente   && alvoFrente) // Regra 05
+        {
+            if(bolaFrente > alvoFrente)
+                acaoFrente[1] = alvoFrente;
+            else
+                acaoFrente[1] = bolaFrente;
+        }
+    if (bolaFrente   && alvoDireita) // Regra 06
+        {
+            if(bolaFrente > alvoDireita)
+                acaoEsquerda[2] = alvoDireita;
+            else
+                acaoEsquerda[2] = bolaFrente;
+        }
+    if (bolaDireita  && alvoEsquerda) // Regra 07
+        {
+            if(bolaDireita > alvoEsquerda)
+                acaoDireita[1] = alvoEsquerda;
+            else
+                acaoDireita[1] = bolaDireita;
+        }
+    if (bolaDireita  && alvoFrente) // Regra 08
+        {
+            if(bolaDireita > alvoFrente)
+                acaoDireita[2] = alvoFrente;
+            else
+                acaoDireita[2] = bolaDireita;
+        }
+    if (bolaDireita  && alvoDireita) // Regra 09
+        {
+            if(bolaDireita > alvoDireita)
+                acaoFrente[2] = alvoDireita;
+            else
+                acaoFrente[2] = bolaDireita;
+        }
+
+
+}
+
+void defuzzificacao()
+{
+    int i,j;
+    acao = 0;
+    float maxAcaoEsquerda = 0;
+    float maxAcaoFrente = 0;
+    float maxAcaoDireita = 0;
+
+
+    // Conjuntos relativos à posição de saida.
+    float Es[TAMANHO_CONJUNTO];
+    float Fs[TAMANHO_CONJUNTO];
+    float Ds[TAMANHO_CONJUNTO];
+    float aux;
+    int Econt=0,Fcont=0,Dcont=0;
+
+    for (i = 0; i<3; i++)
+    {
+        if (acaoEsquerda[i]>maxAcaoEsquerda)
+        {
+            maxAcaoEsquerda = acaoEsquerda[i]; 
+        }
+        if (acaoFrente[i]>maxAcaoFrente)
+        {
+            maxAcaoFrente = acaoFrente[i];
+        }
+        if (acaoDireita[i]>maxAcaoDireita)
+        {
+            maxAcaoDireita = acaoDireita[i];
+        }
+    }
+
+    for (i = 0; i <TAMANHO_CONJUNTO; i++)
+    {
+        if(Eb[i] > maxAcaoEsquerda)
+            Es[i] = maxAcaoEsquerda;
+        else
+            Es[i] = Eb[i];
+        if(Fb[i] > maxAcaoFrente)
+            Fs[i] = maxAcaoFrente;
+        else
+            Fs[i] = Fb[i];
+        if(Db[i] > maxAcaoDireita)
+            Ds[i] = maxAcaoDireita;
+        else
+            Ds[i] = Db[i]; 
+    }
+
+    j = 0;
+    for (i = -180; i <=180; i++)
+    {
+        if(Es[j] > Fs[j]){
+            if(Es[j] > Ds[j]){
+                aux = Es[j];
+                Econt++;
+            }else{
+                aux = Ds[j];
+                Dcont++;
+            }
+        }else{
+            if(Fs[j] > Ds[j]){
+                aux = Fs[j];
+                Fcont++;
+            }else{
+                aux = Ds[j];
+                Dcont++;
+            }
+
+        }
+
+        acao = acao + (i * aux); 
+    }
+
+    acao = acao / (Econt * maxAcaoEsquerda + Fcont * maxAcaoFrente + Dcont * maxAcaoDireita);
+
+
+
 int main( int argc, char* argv[] ) {
 
     float ballAngle, targetAngle, leftMotor, rightMotor;
@@ -129,10 +286,10 @@ int main( int argc, char* argv[] ) {
         fuzzyficacao(ballAngle,targetAngle);
         
         // Corta conjuntos e os une.
-        //inferencia();
+        regras();
         
         // Obtém valor final.
-        //defuzzificacao();
+        defuzzificacao();
         
         leftMotor  = 0.1;
         rightMotor = 0.1;
