@@ -18,6 +18,11 @@ float Ea[TAMANHO_CONJUNTO];
 float Fa[TAMANHO_CONJUNTO];
 float Da[TAMANHO_CONJUNTO];
 
+// Conjuntos relativos à posição de saida.
+float Er[TAMANHO_CONJUNTO];
+float Fr[TAMANHO_CONJUNTO];
+float Dr[TAMANHO_CONJUNTO];
+
 // Graus de pertinência dos conjuntos de entrada.
 float bolaDireita;
 float bolaFrente;
@@ -25,6 +30,13 @@ float bolaEsquerda;
 float alvoDireita;
 float alvoFrente;
 float alvoEsquerda;
+
+float acaoFrente[3];
+float acaoEsquerda[3];
+float acaoDireita[3];
+
+float acao;
+int tipoAcao;
 
 float triangulo(float x, float alfa, float beta, float gama)
 {
@@ -65,6 +77,10 @@ void init()
         Ea[x] = triangulo(x - 180,  -190,   -180,   0   );
         Fa[x] = triangulo(x - 180,  -90 ,    0  ,   90  );
         Da[x] = triangulo(x - 180,  -0  ,    180,   190 );
+
+        Er[x] = triangulo(x - 180,  -190,   -180,      0);
+        Fr[x] = triangulo(x - 180,  -180,      0,    180);
+        Dr[x] = triangulo(x - 180,    -0,    180,    190);
 
         //theta = theta + variacao;
     }
@@ -200,18 +216,18 @@ void defuzzificacao()
 
     for (i = 0; i <TAMANHO_CONJUNTO; i++)
     {
-        if(Eb[i] > maxAcaoEsquerda)
+        if(Er[i] > maxAcaoEsquerda)
             Es[i] = maxAcaoEsquerda;
         else
-            Es[i] = Eb[i];
-        if(Fb[i] > maxAcaoFrente)
+            Es[i] = Er[i];
+        if(Fr[i] > maxAcaoFrente)
             Fs[i] = maxAcaoFrente;
         else
-            Fs[i] = Fb[i];
-        if(Db[i] > maxAcaoDireita)
+            Fs[i] = Fr[i];
+        if(Dr[i] > maxAcaoDireita)
             Ds[i] = maxAcaoDireita;
         else
-            Ds[i] = Db[i]; 
+            Ds[i] = Dr[i]; 
     }
 
     j = 0;
@@ -241,7 +257,7 @@ void defuzzificacao()
 
     acao = acao / (Econt * maxAcaoEsquerda + Fcont * maxAcaoFrente + Dcont * maxAcaoDireita);
 
-
+}
 
 int main( int argc, char* argv[] ) {
 
@@ -284,15 +300,19 @@ int main( int argc, char* argv[] ) {
         
         // Obtém graus de pertinência.
         fuzzyficacao(ballAngle,targetAngle);
-        
-        // Corta conjuntos e os une.
+
+        // Corta os conjuntos e faz a união deles
         regras();
-        
-        // Obtém valor final.
+
+        // Obtém saída final
         defuzzificacao();
-        
-        leftMotor  = 0.1;
-        rightMotor = 0.1;
+
+        leftMotor  = acao;
+        rightMotor = 1 - acao;
+
+        leftMotor *= 0.9;
+        rightMotor *= 0.9;
+
         
         // Transmite ação do robô ao ambiente. Fica bloqueado até que todos os
         // robôs joguem. Se erro, retorna false (neste exemplo, sai do laco).
