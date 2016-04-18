@@ -100,15 +100,15 @@ void init()
         conjAlvo[1][i] = triangulo(i - 180,  -90 ,    0  ,   90  ); // Frente.
         conjAlvo[2][i] = triangulo(i - 180,  -0  ,    180,   190 ); // Direita.
         
-        conjSaida[0][0][i] = triangulo(i - 180,  -180,      0,    180); // Frente.
+        conjSaida[0][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
         conjSaida[0][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
         conjSaida[0][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
         conjSaida[1][0][i] = triangulo(i - 180,    -0,    180,    190); // Direita.
-        conjSaida[1][1][i] = triangulo(i - 180,  -180,      0,    180); // Frente.
+        conjSaida[0][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
         conjSaida[1][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
         conjSaida[2][0][i] = triangulo(i - 180,    -0,    180,    190); // Direita.
         conjSaida[2][1][i] = triangulo(i - 180,    -0,    180,    190); // Direita.
-        conjSaida[2][2][i] = triangulo(i - 180,  -180,      0,    180); // Frente.
+        conjSaida[0][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
 
         //theta = theta + variacao;
     }
