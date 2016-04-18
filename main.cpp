@@ -89,91 +89,86 @@ void fuzzyficacao(float ballAngle, float targetAngle)
 
 void regras()
 {
-    int i;
-
-    for (i=0;i<3;i++) // Inicialização das Variaveis
+    for (int i = 0; i < 3; i++) // Inicialização das Variaveis
     {
         acaoFrente[i] = 0;
         acaoEsquerda[i] = 0;
         acaoDireita[i] = 0;
     }
-
-
+    
+    
     if (bolaEsquerda && alvoEsquerda) // Regra 01
-        {
-            if(bolaEsquerda > alvoEsquerda)
-                acaoFrente[0] = alvoEsquerda;
-            else
-                acaoFrente[0] = bolaEsquerda;
-        }
+    {
+        if(bolaEsquerda > alvoEsquerda)
+            acaoFrente[0] = alvoEsquerda;
+        else
+            acaoFrente[0] = bolaEsquerda;
+    }
     if (bolaEsquerda && alvoFrente) // Regra 02
-        {
-            if(bolaEsquerda > alvoFrente)
-                acaoEsquerda[0] = alvoFrente;
-            else
-                acaoEsquerda[0] = bolaEsquerda;
-        }
+    {
+        if(bolaEsquerda > alvoFrente)
+            acaoEsquerda[0] = alvoFrente;
+        else
+            acaoEsquerda[0] = bolaEsquerda;
+    }
     if (bolaEsquerda && alvoDireita) // Regra 03
-        {
-            if(bolaEsquerda > alvoDireita)
-                acaoEsquerda[1] = alvoDireita;
-            else
-                acaoEsquerda[1] = bolaEsquerda;
-        }
+    {
+        if(bolaEsquerda > alvoDireita)
+            acaoEsquerda[1] = alvoDireita;
+        else
+            acaoEsquerda[1] = bolaEsquerda;
+    }
     if (bolaFrente   && alvoEsquerda) // Regra 04
-        {
-            if(bolaFrente > alvoEsquerda)
-                acaoDireita[0] = alvoEsquerda;
-            else
-                acaoDireita[0] = bolaFrente;
-        }
+    {
+        if(bolaFrente > alvoEsquerda)
+            acaoDireita[0] = alvoEsquerda;
+        else
+            acaoDireita[0] = bolaFrente;
+    }
     if (bolaFrente   && alvoFrente) // Regra 05
-        {
-            if(bolaFrente > alvoFrente)
-                acaoFrente[1] = alvoFrente;
-            else
-                acaoFrente[1] = bolaFrente;
-        }
+    {
+        if(bolaFrente > alvoFrente)
+            acaoFrente[1] = alvoFrente;
+        else
+            acaoFrente[1] = bolaFrente;
+    }
     if (bolaFrente   && alvoDireita) // Regra 06
-        {
-            if(bolaFrente > alvoDireita)
-                acaoEsquerda[2] = alvoDireita;
-            else
-                acaoEsquerda[2] = bolaFrente;
-        }
+    {
+        if(bolaFrente > alvoDireita)
+            acaoEsquerda[2] = alvoDireita;
+        else
+            acaoEsquerda[2] = bolaFrente;
+    }
     if (bolaDireita  && alvoEsquerda) // Regra 07
-        {
-            if(bolaDireita > alvoEsquerda)
-                acaoDireita[1] = alvoEsquerda;
-            else
-                acaoDireita[1] = bolaDireita;
-        }
+    {
+        if(bolaDireita > alvoEsquerda)
+            acaoDireita[1] = alvoEsquerda;
+        else
+            acaoDireita[1] = bolaDireita;
+    }
     if (bolaDireita  && alvoFrente) // Regra 08
-        {
-            if(bolaDireita > alvoFrente)
-                acaoDireita[2] = alvoFrente;
-            else
-                acaoDireita[2] = bolaDireita;
-        }
+    {
+        if(bolaDireita > alvoFrente)
+            acaoDireita[2] = alvoFrente;
+        else
+            acaoDireita[2] = bolaDireita;
+    }
     if (bolaDireita  && alvoDireita) // Regra 09
-        {
-            if(bolaDireita > alvoDireita)
-                acaoFrente[2] = alvoDireita;
-            else
-                acaoFrente[2] = bolaDireita;
-        }
-
-
+    {
+        if(bolaDireita > alvoDireita)
+            acaoFrente[2] = alvoDireita;
+        else
+            acaoFrente[2] = bolaDireita;
+    }
 }
 
 void defuzzificacao()
 {
-    int i,j;
+    int i, j;
     acao = 0;
     float maxAcaoEsquerda = 0;
     float maxAcaoFrente = 0;
     float maxAcaoDireita = 0;
-
 
     // Conjuntos relativos à posição de saida.
     float Es[TAMANHO_CONJUNTO];
@@ -240,8 +235,7 @@ void defuzzificacao()
     }
 
     acao = acao / (Econt * maxAcaoEsquerda + Fcont * maxAcaoFrente + Dcont * maxAcaoDireita);
-
-
+}
 
 int main( int argc, char* argv[] ) {
 
