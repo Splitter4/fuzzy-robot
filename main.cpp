@@ -13,9 +13,14 @@
 #define CONJUNTOS_ALVO      5 // Extrema Esquerda, Esquerda, Frente, Direita e Extrema Direita.
 #define DISTANCIAS_BOLA     3 // Perto, Médio e Longe.
 
-#define CLOSE   1 
-#define NEAR    2 
-#define FAR     3 
+float triangulo(float x, float alfa, float beta, float gama);
+float trapezio(float x, float alfa, float beta, float gama, float delta);
+
+#define EXTREMA_ESQUERDA(x) trapezio (x,  -190,  -180, -135,  -90);
+#define ESQUERDA(x)         trapezio (x,  -135,   -90,  -45,    0);
+#define FRENTE(x)           triangulo(x,   -45,     0,   45);
+#define DIREIA(x)           trapezio (x,     0,    45,   90,  135);
+#define EXTREMA_DIREITA(x)  trapezio (x,    90,   135,  180,  190);
 
 // Conjuntos relativos à posição da bola.
 float conjBola[CONJUNTOS_BOLA][TAMANHO_CONJUNTO];
@@ -86,123 +91,123 @@ void init()
     
     for (int i = 0; i <= TAMANHO_CONJUNTO; i++)
     {
-        conjBola[0][i] = triangulo(i - 180,  -190,  -180,  -90); // Extrema Esquerda.
-        conjBola[1][i] = triangulo(i - 180,  -180,   -90,    0); // Esquerda.
-        conjBola[2][i] = triangulo(i - 180,   -90,     0,   90); // Frente.
-        conjBola[3][i] = triangulo(i - 180,     0,    90,  180); // Direita.
-        conjBola[4][i] = triangulo(i - 180,    90,   180,  190); // Extrema Direita.
+        conjBola[0][i] = EXTREMA_ESQUERDA(i - 180);
+        conjBola[1][i] = ESQUERDA(i - 180);
+        conjBola[2][i] = FRENTE(i - 180);
+        conjBola[3][i] = DIREIA(i - 180);
+        conjBola[4][i] = EXTREMA_DIREITA(i - 180);
         
-        conjAlvo[0][i] = triangulo(i - 180,  -190,  -180,  -90); // Extrema Esquerda.
-        conjAlvo[1][i] = triangulo(i - 180,  -180,   -90,    0); // Esquerda.
-        conjAlvo[2][i] = triangulo(i - 180,   -90,     0,   90); // Frente.
-        conjAlvo[3][i] = triangulo(i - 180,     0,    90,  180); // Direita.
-        conjAlvo[4][i] = triangulo(i - 180,    90,   180,  190); // Extrema Direita.
+        conjAlvo[0][i] = EXTREMA_ESQUERDA(i - 180);
+        conjAlvo[1][i] = ESQUERDA(i - 180);
+        conjAlvo[2][i] = FRENTE(i - 180);
+        conjAlvo[3][i] = DIREIA(i - 180);
+        conjAlvo[4][i] = EXTREMA_DIREITA(i - 180);
         
         
         // Perto
         
-        conjSaida[0][0][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][1][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[0][2][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[0][3][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[0][4][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[0][0][0][i] = ESQUERDA(i - 180);
+        conjSaida[0][1][0][i] = FRENTE(i - 180);
+        conjSaida[0][2][0][i] = FRENTE(i - 180);
+        conjSaida[0][3][0][i] = DIREIA(i - 180);
+        conjSaida[0][4][0][i] = DIREIA(i - 180);
         
-        conjSaida[1][0][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[1][1][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[1][2][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][3][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][4][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[1][0][0][i] = DIREIA(i - 180);
+        conjSaida[1][1][0][i] = DIREIA(i - 180);
+        conjSaida[1][2][0][i] = ESQUERDA(i - 180);
+        conjSaida[1][3][0][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[1][4][0][i] = EXTREMA_ESQUERDA(i - 180);
         
-        conjSaida[2][0][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[2][1][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[2][2][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][3][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[2][4][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[2][0][0][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[2][1][0][i] = ESQUERDA(i - 180);
+        conjSaida[2][2][0][i] = FRENTE(i - 180);
+        conjSaida[2][3][0][i] = DIREIA(i - 180);
+        conjSaida[2][4][0][i] = EXTREMA_ESQUERDA(i - 180);
         
-        conjSaida[3][0][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][1][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][2][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][3][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[3][4][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[3][0][0][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[3][1][0][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[3][2][0][i] = DIREIA(i - 180);
+        conjSaida[3][3][0][i] = ESQUERDA(i - 180);
+        conjSaida[3][4][0][i] = ESQUERDA(i - 180);
         
-        conjSaida[4][0][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[4][1][0][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[4][2][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[4][3][0][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[4][4][0][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[4][0][0][i] = ESQUERDA(i - 180);
+        conjSaida[4][1][0][i] = ESQUERDA(i - 180);
+        conjSaida[4][2][0][i] = FRENTE(i - 180);
+        conjSaida[4][3][0][i] = FRENTE(i - 180);
+        conjSaida[4][4][0][i] = DIREIA(i - 180);
 
         // Médio
 
-        conjSaida[0][0][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][1][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][2][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][3][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[0][4][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[0][0][1][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][1][1][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][2][1][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][3][1][i] = DIREIA(i - 180);
+        conjSaida[0][4][1][i] = DIREIA(i - 180);
         
-        conjSaida[1][0][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[1][1][1][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[1][2][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][3][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][4][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[1][0][1][i] = DIREIA(i - 180);
+        conjSaida[1][1][1][i] = FRENTE(i - 180);
+        conjSaida[1][2][1][i] = ESQUERDA(i - 180);
+        conjSaida[1][3][1][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[1][4][1][i] = EXTREMA_ESQUERDA(i - 180);
         
-        conjSaida[2][0][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[2][1][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[2][2][1][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][3][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[2][4][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[2][0][1][i] = DIREIA(i - 180);
+        conjSaida[2][1][1][i] = DIREIA(i - 180);
+        conjSaida[2][2][1][i] = FRENTE(i - 180);
+        conjSaida[2][3][1][i] = ESQUERDA(i - 180);
+        conjSaida[2][4][1][i] = ESQUERDA(i - 180);
         
-        conjSaida[3][0][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][1][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][2][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][3][1][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[3][4][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[3][0][1][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[3][1][1][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[3][2][1][i] = DIREIA(i - 180);
+        conjSaida[3][3][1][i] = FRENTE(i - 180);
+        conjSaida[3][4][1][i] = ESQUERDA(i - 180);
         
-        conjSaida[4][0][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[4][1][1][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[4][2][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][3][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][4][1][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[4][0][1][i] = ESQUERDA(i - 180);
+        conjSaida[4][1][1][i] = ESQUERDA(i - 180);
+        conjSaida[4][2][1][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][3][1][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][4][1][i] = EXTREMA_DIREITA(i - 180);
 
         // Longe
 
-        conjSaida[0][0][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][1][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][2][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][3][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[0][4][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[0][0][2][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][1][2][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][2][2][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][3][2][i] = EXTREMA_ESQUERDA(i - 180);
+        conjSaida[0][4][2][i] = EXTREMA_ESQUERDA(i - 180);
         
-        conjSaida[1][0][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][1][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][2][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][3][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
-        conjSaida[1][4][2][i] = triangulo(i - 180,  -190,   -180,      0); // Esquerda.
+        conjSaida[1][0][2][i] = ESQUERDA(i - 180);
+        conjSaida[1][1][2][i] = ESQUERDA(i - 180);
+        conjSaida[1][2][2][i] = ESQUERDA(i - 180);
+        conjSaida[1][3][2][i] = ESQUERDA(i - 180);
+        conjSaida[1][4][2][i] = ESQUERDA(i - 180);
         
-        conjSaida[2][0][2][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][1][2][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][2][2][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][3][2][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
-        conjSaida[2][4][2][i] = triangulo(i - 180,   -90,      0,     90); // Frente.
+        conjSaida[2][0][2][i] = FRENTE(i - 180);
+        conjSaida[2][1][2][i] = FRENTE(i - 180);
+        conjSaida[2][2][2][i] = FRENTE(i - 180);
+        conjSaida[2][3][2][i] = FRENTE(i - 180);
+        conjSaida[2][4][2][i] = FRENTE(i - 180);
         
-        conjSaida[3][0][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][1][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][2][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][3][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[3][4][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[3][0][2][i] = DIREIA(i - 180);
+        conjSaida[3][1][2][i] = DIREIA(i - 180);
+        conjSaida[3][2][2][i] = DIREIA(i - 180);
+        conjSaida[3][3][2][i] = DIREIA(i - 180);
+        conjSaida[3][4][2][i] = DIREIA(i - 180);
         
-        conjSaida[4][0][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][1][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][2][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][3][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
-        conjSaida[4][4][2][i] = triangulo(i - 180,     0,    180,    190); // Direita.
+        conjSaida[4][0][2][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][1][2][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][2][2][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][3][2][i] = EXTREMA_DIREITA(i - 180);
+        conjSaida[4][4][2][i] = EXTREMA_DIREITA(i - 180);
 
         //theta = theta + variacao;
     }
     
     for(int i = 0; i < 2000; i++)
     {
-        conjDist[0][i] = trapezio(i, -10, 0, 75, 100); // Perto.
-        conjDist[1][i] = trapezio(i, 75, 100, 300, 325); // Médio.
-        conjDist[2][i] = trapezio(i, 300, 325, 2000, 2010); // Longe.
+        conjDist[0][i] = trapezio(i,  -10,    0,   75,  100); // Perto.
+        conjDist[1][i] = trapezio(i,   75,  100,  300,  325); // Médio.
+        conjDist[2][i] = trapezio(i,  300,  325, 2000, 2010); // Longe.
     }
 }
 
