@@ -16,11 +16,11 @@
 float triangulo(float x, float alfa, float beta, float gama);
 float trapezio(float x, float alfa, float beta, float gama, float delta);
 
-#define EXTREMA_ESQUERDA(x) trapezio (x,  -190,  -180, -135,  -90);
+#define EXTREMA_ESQUERDA(x) triangulo(x,  -190,  -180, -90);
 #define ESQUERDA(x)         trapezio (x,  -135,   -90,  -45,    0);
 #define FRENTE(x)           triangulo(x,   -45,     0,   45);
 #define DIREIA(x)           trapezio (x,     0,    45,   90,  135);
-#define EXTREMA_DIREITA(x)  trapezio (x,    90,   135,  180,  190);
+#define EXTREMA_DIREITA(x)  triangulo(x,    90,   180, 190);
 
 // Conjuntos relativos à posição da bola.
 float conjBola[CONJUNTOS_BOLA][TAMANHO_CONJUNTO];
@@ -38,6 +38,9 @@ float conjSaida[CONJUNTOS_BOLA][CONJUNTOS_ALVO][DISTANCIAS_BOLA][TAMANHO_CONJUNT
 float uBola[CONJUNTOS_BOLA];
 float uAlvo[CONJUNTOS_ALVO];
 float uDist[DISTANCIAS_BOLA];
+
+
+FILE *fileOut;
 
 
 float triangulo(float x, float alfa, float beta, float gama)
@@ -309,20 +312,38 @@ int main( int argc, char* argv[] )
     // Laço de execução de ações.
     printf( "Running...\n\n" );
     
+    fileOut=fopen("ArquivoAnalise.txt","w");
+
+    if(fileOut==0)
+    {
+        printf("Arquivo de Saida não pode ser criado: ArquivoAnalise.txt\n");
+        exit(1);
+    }
+
     // Inicializa conjuntos.
     init();
 
-    float ballAngle, targetAngle, leftMotor, rightMotor,  ballDistance;
+    float ballDistance, ballAngle, targetAngle, obstacleDistance, obstacleAngle, spin, leftMotor = 0, rightMotor = 0, lastLeftMotor, lastRightMotor;
     float conjFinal[TAMANHO_CONJUNTO];
     
     int k = 25;
+    int ownScore, rivalScore;
+    int lastOwnScore = 0, lastRivalScore = 0;
     
     while ( true )
     {
-        ballAngle = -environment.getBallAngle();
-        targetAngle = -environment.getTargetAngle( environment.getOwnGoal() );
-        ballDistance = environment.getDistance();
-        
+        ballDistance        =  environment.getDistance();
+        ballAngle           = -environment.getBallAngle();
+        targetAngle         = -environment.getTargetAngle( environment.getOwnGoal() );
+        obstacleDistance    =  environment.getCollision();
+        obstacleAngle       =  environment.getObstacleAngle();
+        spin                =  environment.getSpin();
+        lastLeftMotor       =  leftMotor;
+        lastRightMotor      =  rightMotor;
+
+        ownScore            = environment.getOwnScore();
+        rivalScore          = environment.getRivalScore();
+
         // Obtém graus de pertinência.
         fuzzyficacao(ballAngle, targetAngle, ballDistance);
 
@@ -335,8 +356,8 @@ int main( int argc, char* argv[] )
         // Obtém saída final
         float resultado = defuzzificacao(conjFinal);
 
-        leftMotor = (resultado/360 + 0.5)*0.6;
-        rightMotor  = (resultado/(-360) + 0.5)*0.6;
+        leftMotor = (resultado/360 + 0.5)*0.7;
+        rightMotor  = (resultado/(-360) + 0.5)*0.7;
         
         if(++k >= 25)
         {
@@ -347,11 +368,20 @@ int main( int argc, char* argv[] )
             
             k = 0;
         }
+
+        fprintf(fileOut,"%.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f \n",ballDistance, ballAngle, targetAngle, obstacleDistance, obstacleAngle, spin, lastLeftMotor , lastRightMotor,leftMotor , rightMotor);
         
         // Transmite ação do robô ao ambiente. Fica bloqueado até que todos os
         // robôs joguem. Se erro, retorna false (neste exemplo, sai do laco).
         if ( environment.act( leftMotor, rightMotor ) == false )
             break; // Termina a execução se falha ao agir.
+
+        if( (ownScore != lastOwnScore) || (rivalScore != lastRivalScore) )
+            fprintf(fileOut,"\n\n GOL\nPlacar:\n\tJogador %d X %d Rival\n\n",ownScore , rivalScore);
+        
+
+        lastOwnScore  = ownScore; 
+        lastRivalScore = rivalScore;
     }
 
     return 0;
